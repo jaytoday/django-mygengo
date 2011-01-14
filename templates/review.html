@@ -1,0 +1,27 @@
+
+<br/>
+<h1>Review</h1>
+{% include "job.html" %}
+<br/><br/>
+<form method="POST" name="review" action="/review/{{ job.job.job_id }}">
+
+<img src="/preview/{{ job.job.job_id }}"/>
+<br/><br/>
+<div>
+    <div style="font-size:.8em; margin: 10px;">Please rate this translation</div>
+    <div>
+        Bad <input name="rating" value="1" type="radio"/> <input name="rating" value="2" type="radio"/> <input name="rating" value="3" type="radio"/> <input name="rating" value="4" type="radio"/> <input name="rating" value="5" type="radio"/> Great
+    </div>
+    <button type="submit" value="Approve">Approve</button> 
+</div>
+            {% if job.comments %}
+                <div class="comments_container" style="margin:20px;">
+                    <b>{{ job.comments|length }} comments</b>
+                    <div class="comments">
+                    {% for comment in job.comments %}
+                        {% include "comment.html" %}
+                    {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+

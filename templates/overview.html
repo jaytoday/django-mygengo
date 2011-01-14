@@ -1,0 +1,25 @@
+
+
+<div class="ui-widget" style="clear:both;height:50px;">
+			<div class="ui-widget-content ui-corner-all" style="  padding: 0px 9px;float:left;"> 
+				<p>
+				    {% if balance.credits %}Credits remaining: <b>{{ balance.credits }}</b>{% else %}no credits remaining{% endif %}
+				    &nbsp; <a style="font-size:.8em;" target="_blank" href="http://www.mygengo.com">get more credits</a>
+				  </p>
+				
+			</div>
+		</div><div style="height:20px;"></div>
+		
+
+{% for job_status, jobs_list in jobs.items %}
+    {% if jobs_list %}
+        <h1>{{ job_status.capitalize }} Jobs</h1>
+        {% for job in jobs_list %}
+            {% include "job.html" %}
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div><i>you haven't ordered any {{ job_status }} jobs</i></div>    
+    {% endif %}
+{% endfor %}
+

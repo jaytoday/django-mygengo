@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}MyGengo Django Plugin{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<style type="text/css">
+    {% include "css/base.css" %}
+</style>
+{% endblock %}
+
+{% block js %}
+<!-- debounce is for order page ajax calls-->
+{{ block.super }}
+<script type="text/javascript" src="/static/js/jquery.ba-throttle-debounce.min.js"></script>
+<script type="text/javascript">
+    {% include "js/job.js" %}
+    {% include "js/order.js" %}
+</script>
+
+
+
+{% endblock %}
+
+{% block body %}
+<nav id="header">
+    <div class="container" id="link-container">
+      
+      <a  id="site_title" style="cursor: pointer; " class="">myGengo<br/> Django Plugin</a>
+      
+      <ul style="margin-left: 200px;">
+        <span id="body-links">
+        <li ref="intro"><a class="active">About</a></li>
+        <li ref="overview"><a>Job Dashboard</a></li>
+        <li ref="order"><a >Order a Job</a></li>
+        <!--<li ref="settings"><a>Settings</a></li>-->
+        </span>
+      </ul>
+  </nav>
+  
+  
+  <div id="body_container">
+    <div id="intro" class="container" style="display:none;">{% include "intro.html" %}</div>
+  <div id="overview" class="container" style="display:none;"></div>
+    <div id="order" class="container" style="display:none;"></div>
+      <div id="settings" class="container" style="display:none;"></div>
+{% endblock %}

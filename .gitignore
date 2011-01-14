@@ -1,0 +1,17 @@
+*.pyc
+.hg*
+*.swp
+#*
+*~
+._*
+.DS_Store
+djangoappengine
+djangotoolbox
+gae_django
+gae_settings.py
+app.yaml
+index.yaml
+cron.yaml
+dbindexer
+examples
+

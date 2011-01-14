@@ -1,0 +1,45 @@
+
+<h1>Order a Translation</h1>
+
+<form method="POST" name="order" action="/order">{% csrf_token %}
+    <div id="text_body_container">
+        <textarea name="body_src" id="body_src" placeholder="enter your text..." style="padding: 10px; font-size: 16px; width:400px; height: 120px; margin: 20px;"></textarea>
+    </div>
+    <div id="options_container">
+        <label>Translate from</label>
+        <select id="lc_src" name="lc_src">
+        {% for language in languages %}
+            <option value="{{ language.lc }}">{{ language.language }}</option> {# language.localized_name #}
+        {% endfor %}
+        </select>
+        <label>Translate to</label>
+        {# TODO: allow this field and tier to be duplicated for multiple grouped orders #}
+        <select id="lc_tgt" name="lc_tgt">
+        {% for language in languages %}
+            <option {% ifequal language.language default_lc_tgt %}selected{% endifequal %} value="{{ language.lc }}">{{ language.language }}</option>
+        {% endfor %}
+        </select>    
+        <br/><br/>
+        <label>Tier</label><br>
+        <div id="tiers">
+        <input type="radio" name="tier" value="standard" checked>Standard<br>
+        <input type="radio" name="tier" value="pro">Pro<br>
+        <input type="radio" name="tier" value="ultra">Ultra<br>
+        </div>
+        {# TODO: add a comment #}
+        <br/><br/>
+        <input type="checkbox" checked name="as_group" id="as_group"> <label>Group Jobs</label>
+        <input type="checkbox" checked name="auto_approve" id="auto_approve"> <label>Auto-approve and publish Jobs</label>
+        <br/><br/>
+        <h3>Total (<span id="word_count_quote">250</span> words)</h3>
+        <h2>$<span id="price_quote">10.25</span></h2>
+        
+        <button type="submit">
+            Order
+        </button>
+           
+    </div>
+    
+</form>
+
+

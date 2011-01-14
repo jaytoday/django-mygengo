@@ -1,0 +1,48 @@
+
+<div class="ui-widget job" id="{{ job.job.job_id }}">
+			<div class="{% ifequal job_status "reviewable" %}ui-state-error{% else %}ui-state-highlight{% endifequal %} ui-corner-all" style="margin-top: 20px; padding: 0 .7em;width:715px"> 
+				<p>{#<span class="ui-icon ui-icon-info" style="float: left; margin-right: .7em;margin-top: 12px;"></span>#}
+				<h2>{{ job.job.language_src }} > {{ job.job.language_tgt }} </h2>
+				<div style="font-size:.8em;font-style:italic;margin:-13px 0 10px;">{{ job.job.date }} | {{ job.job.unit_count }} Words |  {{ job.job.tier.capitalize }} Tier | {{ job.job.credits }} Credits</div>
+        
+        <div class="nav-details">
+            <a ref="comments_container" id="nav-comments">
+                {% if job.comments %}{{ job.comments|length }} Comments{% else %}Add a Comment{% endif %}
+            </a> 
+            {% ifequal job_status "reviewable" %}<a ref="review" id="nav-review">Review</a>{% endifequal %}
+        </div>
+
+{% ifequal job_status "reviewable" %}        
+<div id="review" class="details_container" style="display:none;">        
+<form method="POST" name="review" action="/review/{{ job.job.job_id }}">{% csrf_token %}
+<img src="/preview/{{ job.job.job_id }}"/>
+
+<div style="margin:5px;">
+    <div style="font-size:.7em; font-style:italic;margin: 5px;">Please rate this translation</div>
+<div style="margin:0 0 5px;">
+    Bad <input name="rating" value="1" type="radio"/> 
+        <input name="rating" value="2" type="radio"/> 
+        <input name="rating" value="3" type="radio"/> 
+        <input name="rating" value="4" type="radio"/> 
+        <input name="rating" value="5" type="radio"/> Great
+</div>
+<button type="submit" value="Approve">Submit Rating</button> 
+</div>
+</form>
+</div>
+{% endifequal %}
+
+                    <div id="comments_container" class="details_container"  style="display:none;">
+                        <div id="comments">
+                        {% for comment in job.comments %}
+                            {% include "comment.html" %}
+                        {% endfor %}
+                        </div>
+                         <div class="add_comment">
+                            <textarea style="width:400px;height:100px;" placeholder="write a comment..."></textarea><br/>
+                            <button class="save_comment">Save Comment</button>
+                        </div>
+                    </div>
+
+			</div>
+		</div>

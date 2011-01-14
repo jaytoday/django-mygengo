@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}{% endblock %} - MyGengo Django Plugin</title>
+
+    {% block css %}
+    <link type="text/css" href="/static/css/Aristo/jquery-ui-1.8.7.custom.css" rel="stylesheet">
+    {% endblock %}
+
+    {% block preload_js %}
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+    {% endblock %}
+
+    {% block extra-head %}{% endblock %}
+  </head>
+
+  <body>
+    {% block body %}
+    {% endblock %}
+    {% block js %}
+    {% endblock %}    
+  </body>
+</html>
