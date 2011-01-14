@@ -8,10 +8,10 @@ urlpatterns = patterns('',
     ('^$', 'views.index'),
     ('^overview/?$', 'views.overview'),
     ('^order/?$', 'views.order'),
-    ('^review/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.review'),
     ('^preview/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.preview'),
     ('^service_quote/?$', 'views.service_quote'),
-    ('^post_comment/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_comment'),
+    ('^review/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_review'),
+    ('^comment/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_comment'),
     ('^static/(?P<path>.*)/?$', 'django.views.static.serve',
     {'document_root': settings.MEDIA_ROOT }), # warning: this is inefficient! Use cloudfront or other CDN
 )

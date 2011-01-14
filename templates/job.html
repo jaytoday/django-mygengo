@@ -12,37 +12,37 @@
             {% ifequal job_status "reviewable" %}<a ref="review" id="nav-review">Review</a>{% endifequal %}
         </div>
 
-{% ifequal job_status "reviewable" %}        
-<div id="review" class="details_container" style="display:none;">        
-<form method="POST" name="review" action="/review/{{ job.job.job_id }}">{% csrf_token %}
-<img src="/preview/{{ job.job.job_id }}"/>
 
-<div style="margin:5px;">
-    <div style="font-size:.7em; font-style:italic;margin: 5px;">Please rate this translation</div>
-<div style="margin:0 0 5px;">
-    Bad <input name="rating" value="1" type="radio"/> 
-        <input name="rating" value="2" type="radio"/> 
-        <input name="rating" value="3" type="radio"/> 
-        <input name="rating" value="4" type="radio"/> 
-        <input name="rating" value="5" type="radio"/> Great
-</div>
-<button type="submit" value="Approve">Submit Rating</button> 
-</div>
-</form>
-</div>
+    <div id="comments_container" class="details_container"  style="display:none;">
+        <div id="comments">
+        {% for comment in job.comments %}
+            {% include "comment.html" %}
+        {% endfor %}
+        </div>
+         <div class="add_comment">
+            <textarea style="width:400px;height:100px;" placeholder="write a comment..."></textarea><br/>
+            <button class="save_comment">Save Comment</button>
+        </div>
+    </div>
+    
+{% ifequal job_status "reviewable" %}        
+    <div id="review" class="details_container" style="display:none;">        
+    <img src="/preview/{{ job.job.job_id }}"/>
+    <div style="margin:5px;">
+        <div style="font-size:.7em; font-style:italic;margin: 5px;">Please rate this translation</div>
+    <div style="margin:0 0 5px;">
+        Bad <input name="rating" value="1" type="radio"/> 
+            <input name="rating" value="2" type="radio"/> 
+            <input name="rating" value="3" type="radio"/> 
+            <input name="rating" value="4" type="radio"/> 
+            <input name="rating" value="5" type="radio"/> Great
+    </div>
+    <button class="submit_rating">Submit Rating</button> 
+    </div>
+    </div>
 {% endifequal %}
 
-                    <div id="comments_container" class="details_container"  style="display:none;">
-                        <div id="comments">
-                        {% for comment in job.comments %}
-                            {% include "comment.html" %}
-                        {% endfor %}
-                        </div>
-                         <div class="add_comment">
-                            <textarea style="width:400px;height:100px;" placeholder="write a comment..."></textarea><br/>
-                            <button class="save_comment">Save Comment</button>
-                        </div>
-                    </div>
 
-			</div>
-		</div>
+  </div>
+</div>
+

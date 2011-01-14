@@ -4,7 +4,7 @@
 			<div class="ui-widget-content ui-corner-all" style="  padding: 0px 9px;float:left;"> 
 				<p>
 				    {% if balance.credits %}Credits remaining: <b>{{ balance.credits }}</b>{% else %}no credits remaining{% endif %}
-				    &nbsp; <a style="font-size:.8em;" target="_blank" href="http://www.mygengo.com">get more credits</a>
+				    &nbsp; <a style="font-size:.8em;" target="_blank" href="http://mygengo.com/account/top_up">get more credits</a>
 				  </p>
 				
 			</div>
@@ -19,7 +19,7 @@
             <br/>
         {% endfor %}
     {% else %}
-        <div><i>you haven't ordered any {{ job_status }} jobs</i></div>    
+        <h3><i>you don't have any {{ job_status }} jobs</i></h3>    
     {% endif %}
 {% endfor %}
 

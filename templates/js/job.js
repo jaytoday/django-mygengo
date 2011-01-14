@@ -24,11 +24,14 @@ $(function(){
     });
     
     
-    $('.nav-details').find('a:not(.active)').live('click', function(){
+    $('.nav-details').find('a').live('click', function(){
+        var $isActive = $(this).hasClass('active');
+            
         var $job = $(this).parents('.job:first');
         $job.find('.nav-details').find('a').removeClass('active');
-        $(this).addClass('active');
         $job.find('.details_container').hide(0);
+        if ($isActive) return;
+        $(this).addClass('active');
         $job.find('#' + $(this).attr('ref')).show(200);
     });
     
@@ -41,7 +44,7 @@ $(function(){
         var $thisButton = $(this);
         $thisButton.attr('disabled',true);
         $.ajax({
-                url: '/post_comment/' + $job.attr('id'),
+                url: '/comment/' + $job.attr('id'),
                 type: 'POST',
                 data: {
                     "comment": $commentVal,
@@ -58,6 +61,31 @@ $(function(){
         
         
     });
+    
+    
+    
+     // post a rating
+    $('.submit_rating').live('click',function(){
+        var $reviewForm = $(this).parents('#review');
+        var $job = $(this).parents('.job:first');
+        var $ratingVal = $reviewForm.find('input:checked').val();
+        if (!$ratingVal) return alert('you must select a rating!');
+        var $thisButton = $(this);
+        $thisButton.attr('disabled',true);
+        $.ajax({
+                url: '/review/' + $job.attr('id'),
+                type: 'POST',
+                data: {
+                    "rating": $ratingVal,
+                    },
+                success: function(data) {
+                   $reviewForm.html('your review has been posted.');
+                }
+            });
+        
+        
+    });
+    
 
 
 });
