@@ -103,6 +103,9 @@ width: 800px;
 padding: 30px;
 }
 
+#link-container ul{
+margin-left: 200px;
+}
 .nav-details{
 margin: 5px;
 }
@@ -125,4 +128,61 @@ margin: 5px;
 -moz-border-radius: 5px !important;
 -webkit-border-radius: 5px !important;
 border-radius: 5px !important;
+}
+
+/* intro */
+
+#intro-inner{
+margin:20px 0; 
+font-size:18px; 
+width:700px;
+}
+
+/* account */
+
+.credits{
+clear:both;
+height:50px;
+}
+
+.credits-inner{
+padding: 0px 9px;
+float:left;
+}
+
+/* jobs */
+.job{
+}
+
+.job-inner{
+margin-top: 20px; 
+padding: 0 .7em;
+width:715px
+}
+
+.job-details{
+font-size:.8em;
+font-style:italic;
+margin:-13px 0 10px;
+}
+
+.add_comment textarea{
+width:400px;
+height:100px;
+}
+
+#review .instructions{
+font-size:.7em; 
+font-style:italic;
+margin: 5px;
+}
+
+.comment{
+margin: 10px; 
+padding: 10px;
+}
+
+.comment-details{
+font-size:.8em;
+font-style:italic;
 }

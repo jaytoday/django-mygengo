@@ -33,11 +33,14 @@ def overview(request):
     context['stats'] = json.loads(account.getResponseBody())['response']
     jobs, jobs_params =  get_mygengo_api('jobs')  
     jobs.getJobs('json', jobs_params)   
-    context['jobs'] = {'available':[],'reviewable':[]}
+    jobs_items = {'available':[],'reviewable':[], 'approved': []}
     joblist = json.loads(jobs.getResponseBody())['response']
     for job_item in joblist:
         job_obj = utils.get_job(job_item["job_id"])
-        context['jobs'][job_obj['job']['status']].append(job_obj)
+        jobs_items[job_obj['job']['status']].append(job_obj)
+    context['jobs'] = []
+    for job_status in ('available','reviewable','approved'):
+        context['jobs'].append((job_status, jobs_items[job_status]))
     return render_to_response('overview.html', RequestContext(request, context))
 
 def order(request):
@@ -129,12 +132,13 @@ def service_quote(request):
     """ get quote for service """
 
     service, service_params = get_mygengo_api('service')
-    data = {
-        'body': request.REQUEST['body'],
+    job = {
+        'body_src': request.REQUEST['body'],
         'lc_src': request.REQUEST['lc_src'],
         'lc_tgt': request.REQUEST['lc_tgt'],
         'tier': request.REQUEST['tier']
     }
+    data = { 'jobs': [job] }
     service_params = {
         'api_key': service_params['api_key'],
         '_method': 'post',
@@ -144,10 +148,8 @@ def service_quote(request):
     query_json = json.dumps(service_params, separators=(',', ':'), sort_keys=True)
     service_params = get_api_sig(service_params, query_json)        
     service.getQuote('json', service_params)
-    logging.info(service_params)
-    logging.info(json.loads(service.getResponseBody()))
-    # TODO: return JSON response 
-    import random
-    return HttpResponse(random.randint(1,20))
+    job_info = json.loads(service.getResponseBody())['response']['jobs'][0]
+    job_info['credits'] = "%.2f" % round(job_info['credits'],2) # round to 2 decimal places 
+    return HttpResponse(json.dumps(job_info), mimetype="application/json")
 
 

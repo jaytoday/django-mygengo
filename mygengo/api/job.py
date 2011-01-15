@@ -17,7 +17,10 @@ to contact@mygengo.com so we can send you a copy immediately.
 @license    http://mygengo.com/services/api/dev-docs/mygengo-code-license   New BSD License
 '''
 
-import json
+try:
+    import json
+except:
+    from django.utils import simplejson as json
 from time import time
 
 from . import Api

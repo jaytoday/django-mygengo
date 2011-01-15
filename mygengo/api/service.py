@@ -58,7 +58,7 @@ class Service(Api):
     def getQuote(self, fmt=None, params=None):
         '''Returns quote for body, lc_src, lc_tgt, and tier
 
-        Request: translate/service/language_pairs (GET)
+        Request: translate/service/quote (POST)
 
         - `fmt`: the response format, xml or json
         - `params`: all the necessary request parameters (including api_key

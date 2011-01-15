@@ -31,6 +31,6 @@ def get_mygengo_api(api_name):
     return api_client, params
 
 def get_api_sig(params, query_json):
-
+    """ get API request signature """
     params['api_sig'] = mygengo.crypto.sign(query_json, DEFAULT_MYGENGO_CONFIG['private_key'])
     return params

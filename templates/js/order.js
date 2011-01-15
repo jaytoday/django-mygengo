@@ -5,10 +5,12 @@ function updateQuote(){
             $('#price_quote').text('0.00');
             $('#word_count_quote').text('0');
         } else {
-            //$('#price_quote').text('loading...');
+            $('#updating_quote').show();
 
             $.ajax({
                 url: '/service_quote/',
+                data: "json",
+                type: "POST",
                 data: {
                     "body": $('#body_src').val(),
                     "lc_src": $('#lc_src').val(),
@@ -16,7 +18,9 @@ function updateQuote(){
                     "tier": $('#tiers').find('input:checked').val(),
                     },
                 success: function(data) {
-                    $('#price_quote').text(data);
+                    $('#updating_quote').hide();
+                    $('#price_quote').text(data.credits);
+                    $('#word_count_quote').text(data.unit_count);
                 }
             });
       }

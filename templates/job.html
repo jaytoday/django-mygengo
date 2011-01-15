@@ -1,9 +1,9 @@
 
 <div class="ui-widget job" id="{{ job.job.job_id }}">
-			<div class="{% ifequal job_status "reviewable" %}ui-state-error{% else %}ui-state-highlight{% endifequal %} ui-corner-all" style="margin-top: 20px; padding: 0 .7em;width:715px"> 
-				<p>{#<span class="ui-icon ui-icon-info" style="float: left; margin-right: .7em;margin-top: 12px;"></span>#}
+			<div class="{% ifequal job_status "reviewable" %}ui-state-error{% else %}{% ifequal job_status "available" %}ui-state-active{% else %}ui-state-highlight{% endifequal %}{% endifequal %} job-inner ui-corner-all"> 
+				<p>
 				<h2>{{ job.job.language_src }} > {{ job.job.language_tgt }} </h2>
-				<div style="font-size:.8em;font-style:italic;margin:-13px 0 10px;">{{ job.job.date }} | {{ job.job.unit_count }} Words |  {{ job.job.tier.capitalize }} Tier | {{ job.job.credits }} Credits</div>
+				<div class="job-details">{{ job.job.date }} | {{ job.job.unit_count }} Words |  {{ job.job.tier.capitalize }} Tier | {{ job.job.credits }} Credits</div>
         
         <div class="nav-details">
             <a ref="comments_container" id="nav-comments">
@@ -20,7 +20,7 @@
         {% endfor %}
         </div>
          <div class="add_comment">
-            <textarea style="width:400px;height:100px;" placeholder="write a comment..."></textarea><br/>
+            <textarea placeholder="write a comment..."></textarea><br/>
             <button class="save_comment">Save Comment</button>
         </div>
     </div>
@@ -29,7 +29,7 @@
     <div id="review" class="details_container" style="display:none;">        
     <img src="/preview/{{ job.job.job_id }}"/>
     <div style="margin:5px;">
-        <div style="font-size:.7em; font-style:italic;margin: 5px;">Please rate this translation</div>
+        <div class="instructions">Please rate this translation</div>
     <div style="margin:0 0 5px;">
         Bad <input name="rating" value="1" type="radio"/> 
             <input name="rating" value="2" type="radio"/> 

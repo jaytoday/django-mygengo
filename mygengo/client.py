@@ -92,7 +92,7 @@ class Client(object):
             headers['User-Agent'] = 'pythonMyGengo 1.0'
             conn.request(method, path, body, headers=headers)
             return conn.getresponse()
-        except Exception as e:
+        except Exception, e:
             raise MyGengoException(e.args)
 
     def _make_header(self, fmt):
