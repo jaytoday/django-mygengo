@@ -4,7 +4,9 @@ This Django plugin integrates with the [myGengo API](http://www.mygengo.com/serv
 
 ## Setup
 
-- Make sure Django is installed, and run 'python manage.py runserver' from within this directory. That's it!
+- Make sure Django is installed, and run 'python manage.py runserver' from within this directory. 
+
+- Until API key information can be edited from the application, set the appropriate values to DEFAULT_MYGENGO_CONFIG in api.py.
 
 ## License
 
@@ -12,6 +14,6 @@ This Django plugin integrates with the [myGengo API](http://www.mygengo.com/serv
 
 ## Authors
 
-- James Levy
+- James Levy (jamesalexanderlevyATgmail.com)
 
 
