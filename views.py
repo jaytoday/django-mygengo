@@ -148,7 +148,10 @@ def service_quote(request):
     query_json = json.dumps(service_params, separators=(',', ':'), sort_keys=True)
     service_params = get_api_sig(service_params, query_json)        
     service.getQuote('json', service_params)
-    job_info = json.loads(service.getResponseBody())['response']['jobs'][0]
+    response_json = json.loads(service.getResponseBody())
+    if 'err' in response_json:
+        return HttpResponse(json.dumps(response_json), mimetype="application/json")
+    job_info = response_json['response']['jobs'][0]
     job_info['credits'] = "%.2f" % round(job_info['credits'],2) # round to 2 decimal places 
     return HttpResponse(json.dumps(job_info), mimetype="application/json")
 

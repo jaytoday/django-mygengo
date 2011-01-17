@@ -19,7 +19,13 @@ function updateQuote(){
                     },
                 success: function(data) {
                     $('#updating_quote').hide();
-                    $('#price_quote').text(data.credits);
+                    if (data.err){
+                        $('#price_quote').html(' &nbsp; <i>' + data.err.msg + '</i>');
+                        $('#submit_order').attr('disabled',true);
+                        return;
+                    }
+                     $('#submit_order').attr('disabled',false);
+                     $('#price_quote').text(data.credits);
                     $('#word_count_quote').text(data.unit_count);
                 }
             });
