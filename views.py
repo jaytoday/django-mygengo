@@ -1,6 +1,8 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, Http404, iri_to_uri
+from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from django.core.exceptions import ObjectDoesNotExist
 from time import time
 from operator import itemgetter
 from time import time
@@ -14,13 +16,24 @@ except:
     from django.utils import simplejson as json
 
 import utils 
+from user import models
+from user.auth import authenticate
 from api import get_mygengo_api, get_api_sig
 
 ''' Public views '''
 
+
 def index(request):
     """ landing page w/ navigation """
     context =  {}   
+    if 'user' in request.session:
+        user = request.session['user']
+        context['user'] = user
+        try:
+            apikey = models.APIKey.objects.get(username=user.username)
+        except ObjectDoesNotExist:
+            apikey = {}
+        context['apikey'] = apikey
     return render_to_response('index.html', RequestContext(request, context))
 
 def overview(request):
@@ -57,7 +70,11 @@ def preview(request, job_id):
     job.previewJob(job_id, 'json', job_params)
     return HttpResponse(job.response.fp.read(), mimetype="image/jpeg")
 
-
+@authenticate
+def login(request):
+    """ landing page w/ navigation """
+    return HttpResponseRedirect('/')
+    
 ''' POST handlers '''
 
 def post_order(request):
@@ -95,6 +112,22 @@ def post_order(request):
     job.postJob('json', job_params)
 
     return HttpResponseRedirect('/')
+
+@authenticate
+def post_settings(request):
+    """ save settings """
+    context =  {}  
+    if request.POST.get('public_key'):
+        try:
+            apikey = models.APIKey.objects.get(username=request.session['user'].username)
+        except ObjectDoesNotExist:
+            apikey = models.APIKey(username=request.session['user'].username)
+        apikey.public_key = request.POST['public_key']
+        apikey.private_key = request.POST['private_key']
+        apikey.save()
+    
+    return HttpResponseRedirect('/')
+
     
 def post_review(request, job_id):
     """ post a review (approval) """

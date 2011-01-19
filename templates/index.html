@@ -30,7 +30,7 @@
         <li ref="intro"><a class="active">About</a></li>
         <li ref="overview"><a>Job Dashboard</a></li>
         <li ref="order"><a >Order a Job</a></li>
-        <!--<li ref="settings"><a>Settings</a></li>-->
+        <li ref="settings"><a>Settings</a></li>
         </span>
       </ul>
   </nav>
@@ -40,5 +40,5 @@
     <div id="intro" class="container" style="display:none;">{% include "intro.html" %}</div>
   <div id="overview" class="container" style="display:none;"></div>
     <div id="order" class="container" style="display:none;"></div>
-      <div id="settings" class="container" style="display:none;"></div>
+      <div id="settings" class="container" style="display:none;">{% include "settings.html" %}</div>
 {% endblock %}

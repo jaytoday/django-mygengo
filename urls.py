@@ -7,12 +7,16 @@ handler500 = 'djangotoolbox.errorviews.server_error'
 urlpatterns = patterns('',
     ('^$', 'views.index'),
     ('^overview/?$', 'views.overview'),
-    ('^order/?$', 'views.order'),
+    ('^order/?$', 'views.post_order'),
+    ('^settings/?$', 'views.post_settings'), 
     ('^preview/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.preview'),
+    ('^login/?$', 'views.login'),
     ('^service_quote/?$', 'views.service_quote'),
     ('^review/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_review'),
     ('^comment/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_comment'),
     ('^static/(?P<path>.*)/?$', 'django.views.static.serve',
     {'document_root': settings.MEDIA_ROOT }), # warning: this is inefficient! Use cloudfront or other CDN
 )
+
+
 

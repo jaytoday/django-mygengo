@@ -1,0 +1,13 @@
+<html>
+<head>
+<title>Login Required</title>
+</head>
+<body>
+<h1>Login Required</h1>
+<form action="{{ action_url }}" method="POST">{% csrf_token %}
+<h2>Please log in:</h2>
+<table>{{ form }}</table>
+<input type="submit" value="Log In" />
+</form>
+</body>
+</html>
