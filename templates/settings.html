@@ -1,5 +1,4 @@
 <div>
-{% if user %}
     <form method="POST" name="settings" action="/settings">{% csrf_token %}
     <a href="http://www.mygengo.com" target="_blank">Generate API keys on myGengo.com</a>
     <br/><label>Your Public API Key</label>
@@ -8,7 +7,6 @@
     <input type="text" name="private_key" id="private_key" placeholder="your private API key..." value="{{ apikey.private_key }}"/>
     <br/><button style="margin:10px;" >Save</button>
     </form>
-{% else %}
-    <a href="/login">Click here to login</a> so you can save your API Key.
-{% endif %}
+    <br/>
+    <a href="/logout">Logout</a>
 </div>

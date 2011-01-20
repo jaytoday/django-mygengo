@@ -14,29 +14,32 @@ class AuthenticateUser:
 
   def authenticate(self, request, page_slug=None):
     self.request = request
-    
+    context = {}
     form = None
     user = None
-    if 'user' in request.session:
+    if request.session.get('user'):
       user = request.session['user']
     elif request.POST:
       form = LoginForm(request.POST)
       if form.is_valid():
         user = self.verifyAccount(form['username'].data, form['password'].data)
-        request.session['user'] = user
+        if user:
+            request.session['user'] = user
+        else:
+            form = None
+            context['error'] = 'Incorrect password'
     
     if user:
         if page_slug:
             if user.has_access(page_slug):
                 return self.view(request, page_slug)
-    
         else:
             return self.view(request)
     
     if not form:
         form = LoginForm()
         action = request.META['PATH_INFO']
-        context = {'form': form, 'action_url': action}
+        context.update({'form': form, 'action_url': action})
         return render_to_response("login.html", RequestContext(request, context))
 
   def verifyAccount(self, username, password):
@@ -47,7 +50,7 @@ class AuthenticateUser:
             user = User(username=username,password=password)
             user.save()
             return user
-        if user.verify(password):
+        if password == user.password:
             return user
         else:
             return False

@@ -28,9 +28,13 @@
       <ul>
         <span id="body-links">
         <li ref="intro"><a class="active">About</a></li>
+        {% if authuser %}
         <li ref="overview"><a>Job Dashboard</a></li>
         <li ref="order"><a >Order a Job</a></li>
         <li ref="settings"><a>Settings</a></li>
+        {% else %}
+         <li><a href="/login">Register or Login</a></li>
+        {% endif %}
         </span>
       </ul>
   </nav>

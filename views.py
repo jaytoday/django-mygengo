@@ -28,7 +28,7 @@ def index(request):
     context =  {}   
     if 'user' in request.session:
         user = request.session['user']
-        context['user'] = user
+        context['authuser'] = user
         try:
             apikey = models.APIKey.objects.get(username=user.username)
         except ObjectDoesNotExist:
@@ -39,17 +39,20 @@ def index(request):
 def overview(request):
     """ overview of orders """
     context =  {}   
-    account, account_params =  get_mygengo_api('account')
+    account, account_params =  get_mygengo_api('account', request)
     account.getBalance('json', account_params)
-    context['balance'] = json.loads(account.getResponseBody())['response']
+    balance_response = json.loads(account.getResponseBody())
+    if 'response' not in balance_response:
+        return HttpResponse('myGengo API error. Check that your API keys are correctly set.')
+    context['balance'] = balance_response['response']
     account.getStats('json', account_params)
     context['stats'] = json.loads(account.getResponseBody())['response']
-    jobs, jobs_params =  get_mygengo_api('jobs')  
+    jobs, jobs_params =  get_mygengo_api('jobs', request)  
     jobs.getJobs('json', jobs_params)   
     jobs_items = {'available':[],'reviewable':[], 'approved': []}
     joblist = json.loads(jobs.getResponseBody())['response']
     for job_item in joblist:
-        job_obj = utils.get_job(job_item["job_id"])
+        job_obj = utils.get_job(job_item["job_id"], request)
         jobs_items[job_obj['job']['status']].append(job_obj)
     context['jobs'] = []
     for job_status in ('available','reviewable','approved'):
@@ -58,21 +61,29 @@ def overview(request):
 
 def order(request):
     """ order a job """
-    if request.method == "POST":
+    if 'body_src' in request.POST:
         return post_order(request)
     context =  { 'default_lc_tgt': 'Japanese' }
-    context['languages'], context['language_pairs'] = utils.get_language_info()        
+    try:
+        context['languages'], context['language_pairs'] = utils.get_language_info(request)   
+    except ObjectDoesNotExist:
+        return HttpResponse('myGengo API error. Check that your API keys are correctly set.')
     return render_to_response('order.html', RequestContext(request, context))
 
 def preview(request, job_id):
     """ get JPEG image for job """
-    job, job_params =  get_mygengo_api('job')    
+    job, job_params =  get_mygengo_api('job', request)    
     job.previewJob(job_id, 'json', job_params)
     return HttpResponse(job.response.fp.read(), mimetype="image/jpeg")
 
 @authenticate
 def login(request):
     """ landing page w/ navigation """
+    return HttpResponseRedirect('/')
+
+def logout(request):
+    if 'user' in request.session:
+        del request.session['user']
     return HttpResponseRedirect('/')
     
 ''' POST handlers '''
@@ -97,7 +108,7 @@ def post_order(request):
             job_fields[bool_field] = 0
     
     data = {'job':  job_fields }
-    job, job_params = get_mygengo_api('job')      
+    job, job_params = get_mygengo_api('job', request)      
     job_params = {
         'api_key': job_params['api_key'],
         '_method': 'post',
@@ -133,7 +144,7 @@ def post_review(request, job_id):
     """ post a review (approval) """
     
     data = {'approve': True, 'rating': int(request.REQUEST['rating'])}
-    job, job_params = get_mygengo_api('job')      
+    job, job_params = get_mygengo_api('job', request)      
     job_params = {
         'api_key': job_params['api_key'],
         '_method': 'post',
@@ -148,7 +159,7 @@ def post_review(request, job_id):
 def post_comment(request, job_id):
     """ post comment """
     data = {'body': request.REQUEST['comment']}
-    job, job_params = get_mygengo_api('job')      
+    job, job_params = get_mygengo_api('job', request)      
     job_params = {
         'api_key': job_params['api_key'],
         '_method': 'post',
@@ -164,7 +175,7 @@ def post_comment(request, job_id):
 def service_quote(request):
     """ get quote for service """
 
-    service, service_params = get_mygengo_api('service')
+    service, service_params = get_mygengo_api('service', request)
     job = {
         'body_src': request.REQUEST['body'],
         'lc_src': request.REQUEST['lc_src'],

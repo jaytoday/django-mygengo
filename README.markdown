@@ -4,9 +4,13 @@ This Django plugin integrates with the [myGengo API](http://www.mygengo.com/serv
 
 ## Setup
 
-- Make sure Django is installed, and run 'python manage.py runserver' from within this directory. 
+- Make sure Django is installed, and run 'python manage.py syncdb' and 'python manage.py runserver' from this directory. 
 
-- Until API key information can be edited from the application, set the appropriate values to DEFAULT_MYGENGO_CONFIG in api.py.
+- To get started, register a username and password and configure your myGengo API keys on the settings page. 
+
+- Make sure to change the DEBUG value in settings.py to False before deploying to production. When DEBUG is False, use live API keys.
+
+- View the [myGengo API](http://www.mygengo.com/services/api/) documentation for more details
 
 ## License
 
