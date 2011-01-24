@@ -7,6 +7,7 @@ import mygengo
 import mygengo.api
 import mygengo.crypto
 import settings
+import logging
 
 from user import models
 
@@ -41,10 +42,11 @@ def get_mygengo_api(api_name, request):
             config.set('api_key', str(apikey.public_key))
             config.set('private_key', str(apikey.private_key))
         except ObjectDoesNotExist:
-            pass
+            logging.error('apikey not found for user')
+
     # create the request parameters
     params = {'ts': int(time()),
-              'api_key': config.get('api_key', must_exist=True)
+              'api_key': config.get('api_key', must_exist=True),
               }
     query_string = urlencode(sorted(params.items(), key=itemgetter(0)))
     params['api_sig'] = mygengo.crypto.sign(query_string, config.get('private_key', must_exist=True))
@@ -52,7 +54,7 @@ def get_mygengo_api(api_name, request):
     api_client = mygengo.api.factory(api_name, config)
     return api_client, params
 
-def get_api_sig(params, query_json):
+def get_api_sig(params, client, query_json):
     """ get API request signature """
-    params['api_sig'] = mygengo.crypto.sign(query_json, params['private_key'])
+    params['api_sig'] = mygengo.crypto.sign(query_json, client.config.private_key)
     return params

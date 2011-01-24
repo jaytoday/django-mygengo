@@ -9,6 +9,7 @@ from time import time
 import datetime
 from urllib import urlencode
 import logging
+import settings
 
 try:
     import json
@@ -25,7 +26,7 @@ from api import get_mygengo_api, get_api_sig
 
 def index(request):
     """ landing page w/ navigation """
-    context =  {}   
+    context =  { 'sandbox': settings.DEBUG }   
     if 'user' in request.session:
         user = request.session['user']
         context['authuser'] = user
@@ -116,7 +117,7 @@ def post_order(request):
         'data': json.dumps(data, separators=(',', ':'))
     }
     query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
-    job_params = get_api_sig(job_params, query_json)
+    job_params = get_api_sig(job_params, job, query_json)
 
     # translate/jobs (POST)
     # Submits a job or group of jobs to translate.
@@ -152,7 +153,7 @@ def post_review(request, job_id):
         'data': json.dumps(data, separators=(',', ':'))
     }
     query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
-    job_params = get_api_sig(job_params, query_json)    
+    job_params = get_api_sig(job_params, job, query_json)    
     job.putApprove(job_id, 'json', job_params)
     return HttpResponse(job.getResponseBody())
 
@@ -167,7 +168,7 @@ def post_comment(request, job_id):
         'data': json.dumps(data, separators=(',', ':'))
     }
     query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
-    job_params = get_api_sig(job_params, query_json)    
+    job_params = get_api_sig(job_params, job, query_json)    
     job.postComment(job_id, 'json', job_params)    
     return HttpResponse(job.getResponseBody())
 
@@ -190,9 +191,11 @@ def service_quote(request):
         'data': json.dumps(data, separators=(',', ':'))
     }
     query_json = json.dumps(service_params, separators=(',', ':'), sort_keys=True)
-    service_params = get_api_sig(service_params, query_json)        
+    service_params = get_api_sig(service_params, service, query_json)        
     service.getQuote('json', service_params)
     response_json = json.loads(service.getResponseBody())
+    logging.info(service_params)
+    logging.info(response_json)
     if 'err' in response_json:
         return HttpResponse(json.dumps(response_json), mimetype="application/json")
     job_info = response_json['response']['jobs'][0]

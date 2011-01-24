@@ -1,20 +1,22 @@
 from django.conf.urls.defaults import *
-import views
+
 import settings
+
+#from mygengo-plugin import views
 
 handler500 = 'djangotoolbox.errorviews.server_error'
 
 urlpatterns = patterns('',
-    ('^$', 'views.index'),
-    ('^overview/?$', 'views.overview'),
-    ('^order/?$', 'views.order'),
-    ('^settings/?$', 'views.post_settings'), 
-    ('^preview/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.preview'),
-    ('^login/?$', 'views.login'),
-    ('^logout/?$', 'views.logout'),
-    ('^service_quote/?$', 'views.service_quote'),
-    ('^review/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_review'),
-    ('^comment/(?P<job_id>[A-Za-z0-9]+)/?$', 'views.post_comment'),
+    ('^$', 'mygengo-plugin.views.index'),
+    ('^overview/?$', 'mygengo-plugin.views.overview'),
+    ('^order/?$', 'mygengo-plugin.views.order'),
+    ('^settings/?$', 'mygengo-plugin.views.post_settings'), 
+    ('^preview/(?P<job_id>[A-Za-z0-9]+)/?$', 'mygengo-plugin.views.preview'),
+    ('^login/?$', 'mygengo-plugin.views.login'),
+    ('^logout/?$', 'mygengo-plugin.views.logout'),
+    ('^service_quote/?$', 'mygengo-plugin.views.service_quote'),
+    ('^review/(?P<job_id>[A-Za-z0-9]+)/?$', 'mygengo-plugin.views.post_review'),
+    ('^comment/(?P<job_id>[A-Za-z0-9]+)/?$', 'mygengo-plugin.views.post_comment'),
     ('^static/(?P<path>.*)/?$', 'django.views.static.serve',
     {'document_root': settings.MEDIA_ROOT }), # warning: this is inefficient! Use cloudfront or other CDN
 )

@@ -1,6 +1,7 @@
 <div>
     <form method="POST" name="settings" action="/settings">{% csrf_token %}
-    <a href="http://www.mygengo.com" target="_blank">Generate API keys on myGengo.com</a>
+    <a href="http://{% if sandbox %}sandbox.{% endif %}mygengo.com/account/api_settings" target="_blank">Generate {% if sandbox %}Sandbox{% endif %} API keys on myGengo.com</a>
+    <br/>
     <br/><label>Your Public API Key</label>
     <input type="text" name="public_key" id="public_key" placeholder="your public API key..." value="{{ apikey.public_key }}"/>
     <br/><label>Your Public API Key</label>
