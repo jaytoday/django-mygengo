@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseRedirect, Http404, iri_to_uri
+from django.http import HttpResponse, HttpResponseRedirect,  iri_to_uri
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
@@ -37,8 +37,11 @@ def index(request):
         context['apikey'] = apikey
     return render_to_response('index.html', RequestContext(request, context))
 
+
+@utils.handle_api_errors
 def overview(request):
     """ overview of orders """
+    MAX_JOBS = 5
     context =  {}   
     account, account_params =  get_mygengo_api('account', request)
     account.getBalance('json', account_params)
@@ -50,16 +53,19 @@ def overview(request):
     context['stats'] = json.loads(account.getResponseBody())['response']
     jobs, jobs_params =  get_mygengo_api('jobs', request)  
     jobs.getJobs('json', jobs_params)   
-    jobs_items = {'available':[],'reviewable':[], 'approved': []}
+    jobs_items = {'available':[],'reviewable':[], 'approved': [], 'revising': []}
     joblist = json.loads(jobs.getResponseBody())['response']
-    for job_item in joblist:
+    for job_item in joblist[:MAX_JOBS]:
         job_obj = utils.get_job(job_item["job_id"], request)
+        if not job_obj:
+            continue
         jobs_items[job_obj['job']['status']].append(job_obj)
     context['jobs'] = []
-    for job_status in ('available','reviewable','approved'):
+    for job_status in ('available','reviewable','approved', 'revising'):
         context['jobs'].append((job_status, jobs_items[job_status]))
     return render_to_response('overview.html', RequestContext(request, context))
 
+@utils.handle_api_errors
 def order(request):
     """ order a job """
     if 'body_src' in request.POST:

@@ -13,6 +13,30 @@ except:
 
 from api import get_mygengo_api, get_api_sig
 
+from mygengo.exception import MyGengoException
+
+def handle_api_errors(f):
+    ''' return 504 status code if mygengo raises an error, and relay the message'''
+    def decorator(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except MyGengoException, e:
+            return HttpResponse(e,status=504)            
+    return decorator
+
+def return_none_if_error(f):
+    ''' return 504 status code if mygengo raises an error, and relay the message'''
+    def decorator(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception, e:
+            logging.error(e)
+            return None            
+    return decorator
+        
+
+
+@return_none_if_error
 def get_job(job_id, request):
     """ get job and comments given a job id """
     # TODO: cache 

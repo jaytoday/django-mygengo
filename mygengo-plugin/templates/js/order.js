@@ -27,6 +27,9 @@ function updateQuote(){
                      $('#submit_order').attr('disabled',false);
                      $('#price_quote').text(data.credits);
                     $('#word_count_quote').text(data.unit_count);
+                },
+                error: function(jXHR, textStatus, errorThrown){
+                     $('#price_quote').html(' &nbsp; <i>' + errorThrown + '</i>');
                 }
             });
       }
