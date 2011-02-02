@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from time import time
+import datetime
 from operator import itemgetter
 from time import time
 import datetime
@@ -41,7 +42,7 @@ def index(request):
 @utils.handle_api_errors
 def overview(request):
     """ overview of orders """
-    MAX_JOBS = 5
+
     context =  {}   
     account, account_params =  get_mygengo_api('account', request)
     account.getBalance('json', account_params)
@@ -54,16 +55,15 @@ def overview(request):
     jobs, jobs_params =  get_mygengo_api('jobs', request)  
     jobs.getJobs('json', jobs_params)   
     jobs_items = {'available':[],'reviewable':[], 'approved': [], 'revising': []}
-    joblist = json.loads(jobs.getResponseBody())['response']
-    for job_item in joblist[:MAX_JOBS]:
-        job_obj = utils.get_job(job_item["job_id"], request)
-        if not job_obj:
-            continue
-        jobs_items[job_obj['job']['status']].append(job_obj)
-    context['jobs'] = []
-    for job_status in ('available','reviewable','approved', 'revising'):
-        context['jobs'].append((job_status, jobs_items[job_status]))
+    joblist = json.loads(jobs.getResponseBody())['response'] 
+    for job in joblist:
+        job['date'] = datetime.datetime.fromtimestamp(job['ctime']).strftime("%b %d %Y")
+    context['jobs'] = joblist
     return render_to_response('overview.html', RequestContext(request, context))
+
+def job(request, job_id):
+    job_obj = utils.get_job(job_id, request)
+    return render_to_response('job.html', RequestContext(request, { 'job': job_obj } ))
 
 @utils.handle_api_errors
 def order(request):
@@ -147,10 +147,18 @@ def post_settings(request):
     return HttpResponseRedirect('/')
 
     
-def post_review(request, job_id):
-    """ post a review (approval) """
+def post_approve(request, job_id):
+    """ post approval """
     
-    data = {'approve': True, 'rating': int(request.REQUEST['rating'])}
+    data = { 
+            'action': 'approve',
+            'rating': int(request.REQUEST['rating']),
+            'public': int(request.REQUEST['public']) 
+         }
+    for arg in ('for_translator','for_mygengo'):
+        if request.REQUEST.get(arg):
+            data[arg] = request.REQUEST[arg]
+    
     job, job_params = get_mygengo_api('job', request)      
     job_params = {
         'api_key': job_params['api_key'],
@@ -161,8 +169,64 @@ def post_review(request, job_id):
     query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
     job_params = get_api_sig(job_params, job, query_json)    
     job.putApprove(job_id, 'json', job_params)
-    return HttpResponse(job.getResponseBody())
+    return HttpResponse(job.getResponseBody() + str(job_params))
 
+def post_revise(request, job_id):
+    """ post request to revise """
+    
+    data = { 'action': 'revise', 'comment': request.REQUEST['comment'] }
+    job, job_params = get_mygengo_api('job', request)      
+    job_params = {
+        'api_key': job_params['api_key'],
+        '_method': 'post',
+        'ts': str(int(time())),
+        'data': json.dumps(data, separators=(',', ':'))
+    }
+    query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
+    job_params = get_api_sig(job_params, job, query_json)    
+    job.putRevise(job_id, 'json', job_params)
+    return HttpResponse(job.getResponseBody() + str(job_params))
+    
+def post_reject(request, job_id):
+    """ reject translation """
+    
+    data = { 
+        'action': 'reject',
+        'reason': request.REQUEST['reason'],
+        'comment': request.REQUEST['comment'],
+        'captcha': request.REQUEST['captcha'],
+        'follow_up': request.REQUEST['follow_up'],
+       } 
+       
+    job, job_params = get_mygengo_api('job', request)      
+    job_params = {
+        'api_key': job_params['api_key'],
+        '_method': 'post',
+        'ts': str(int(time())),
+        'data': json.dumps(data, separators=(',', ':'))
+    }
+    query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
+    job_params = get_api_sig(job_params, job, query_json)    
+    job.putReject(job_id, 'json', job_params)
+    return HttpResponse(job.getResponseBody() + str(job_params))    
+
+
+def post_purchase(request, job_id):
+    """ purchase a translation for a job """
+    
+    data = { 'action': 'purchase' } 
+    job, job_params = get_mygengo_api('job', request)      
+    job_params = {
+        'api_key': job_params['api_key'],
+        '_method': 'post',
+        'ts': str(int(time())),
+        'data': json.dumps(data, separators=(',', ':'))
+    }
+    query_json = json.dumps(job_params, separators=(',', ':'), sort_keys=True)
+    job_params = get_api_sig(job_params, job, query_json)    
+    job.putPurchase(job_id, 'json', job_params)
+    return HttpResponse(job.getResponseBody() + str(job_params))      
+    
 def post_comment(request, job_id):
     """ post comment """
     data = {'body': request.REQUEST['comment']}

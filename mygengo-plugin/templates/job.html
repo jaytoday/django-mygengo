@@ -1,15 +1,28 @@
 
 <div class="ui-widget job" id="{{ job.job.job_id }}">
-			<div class="{% ifequal job_status "reviewable" %}ui-state-error{% else %}{% ifequal job_status "available" %}ui-state-active{% else %}ui-state-highlight{% endifequal %}{% endifequal %} job-inner ui-corner-all"> 
+			<div class="{% ifequal job.job.status "reviewable" %}ui-state-error{% else %}{% ifequal job.job.status "available" %}ui-state-active{% else %}ui-state-highlight{% endifequal %}{% endifequal %} job-inner ui-corner-all"> 
 				<p>
 				<h2>{{ job.job.language_src }} > {{ job.job.language_tgt }} </h2>
-				<div class="job-details">{{ job.job.date }} | {{ job.job.unit_count }} Words |  {{ job.job.tier.capitalize }} Tier | {{ job.job.credits }} Credits</div>
+				<div class="job-details">{{ job.job.date }} | <b>{{ job.job.status }}</b> |{{ job.job.unit_count }} Words |  {{ job.job.tier.capitalize }} Tier | {{ job.job.credits }} Credits</div>
+				
+		 {% ifequal job.job.status "reviewable" %}
+		    <h4>Translation For Review</h4>
+		    <img src="/preview/{{ job.job.job_id }}"/>
+        {% endifequal %}
+
+		 {% ifequal job.job.status "approved" %}
+		    <br/><h4>Completed Translation</h4>
+		    <p style="margin: 0 30px 30px;">{{ job.job.body_tgt }}</p>
+        {% endifequal %}
+    
+        
         
         <div class="nav-details">
+            {#{% ifequal job.job.status "available" %}<a ref="purchase" id="nav-purchase">Purchase</a>  | {% endifequal %}#}
+            {% ifequal job.job.status "reviewable" %}<a ref="approve" id="nav-approve">Approve</a> | <a ref="revise" id="nav-revise">Request Revision</a> | <a ref="reject" id="nav-reject">Reject</a> | {% endifequal %}
             <a ref="comments_container" id="nav-comments">
                 {% if job.comments %}{{ job.comments|length }} Comments{% else %}Add a Comment{% endif %}
-            </a> 
-            {% ifequal job_status "reviewable" %}<a ref="review" id="nav-review">Review</a>{% endifequal %}
+            </a> | <a ref="original" id="nav-original">Original Text</a>
         </div>
 
 
@@ -24,23 +37,100 @@
             <button class="save_comment">Save Comment</button>
         </div>
     </div>
+
+{% ifequal job.job.status "available" %} 
+     <div id="purchase" class="details_container" style="display:none;">        
+
+    <div style="margin:5px;">
+       <div class="instructions">This translation will deduct {{ job.job.credits }} credits from your balance.</div>
+    </div>
+    <button id="submit_purchase">Submit Purchase</button> 
+
+    </div>
     
-{% ifequal job_status "reviewable" %}        
-    <div id="review" class="details_container" style="display:none;">        
-    <img src="/preview/{{ job.job.job_id }}"/>
+ {% endifequal %}   
+{% ifequal job.job.status "reviewable" %}        
+    <div id="approve" class="details_container" style="display:none;">        
+
     <div style="margin:5px;">
         <div class="instructions">Please rate this translation</div>
-    <div style="margin:0 0 5px;">
+    <div class="ratings" style="margin:0 0 5px;">
         Bad <input name="rating" value="1" type="radio"/> 
             <input name="rating" value="2" type="radio"/> 
             <input name="rating" value="3" type="radio"/> 
             <input name="rating" value="4" type="radio"/> 
             <input name="rating" value="5" type="radio"/> Great
     </div>
-    <button class="submit_rating">Submit Rating</button> 
+        <div class="instructions">Optional: Do you have feedback for the translator?</div>
+    <div style="margin:0 0 5px;">
+        <textarea width="400px; height:60px;" id="for_translator"></textarea>
     </div>
+        <div class="instructions">Optional: Do you have feedback for myGengo?</div>
+    <div style="margin:0 0 5px;">
+        <textarea width="400px; height:60px;" id="for_mygengo"></textarea>
+    </div>    
+        <div class="instructions">Can this feedback be shared publicly?</div>
+    <div style="margin:0 0 5px;">
+        <input type="checkbox" id="public" checked />
+    </div>        
+
+    <button id="submit_approve">Submit Approval</button> 
     </div>
+
+    </div>
+
+    <div id="revise" class="details_container" style="display:none;">        
+            <div style="margin:5px;">
+          <div class="instructions">Please specify why you are asking for revision.</div>
+        <div style="margin:0 0 5px;">
+            <textarea width="400px; height:60px;" id="revise_comment"></textarea>
+        </div>
+        <button id="submit_revise">Submit Request</button> 
+        </div>
+  </div>  
+  
+     <div id="reject" class="details_container" style="display:none;">        
+            <div style="margin:5px;">
+            <div class="instructions">Please choose why you are rejecting this translation.</div>
+        <div style="margin:0 0 5px;">
+            <select id="reason">
+                <option>quality</option>
+                <option>incomplete</option>
+                <option>other</option>
+            </select>
+        </div>            
+            <div class="instructions">Please comment on why you are rejecting this translation.</div>
+        <div style="margin:0 0 5px;">
+            <textarea id="reject_comment"></textarea>
+        </div>
+        <div style="margin:0 0 5px;">
+            Try again with another translator? <input id="follow_up" type="checkbox" checked></input>
+        </div> 
+            <div class="instructions">Please type the letters shown in the image below.</div>
+        <div style="margin:0 0 5px;">
+            <img src="{{ job.job.captcha_url }}"/>
+            <br/><input type="text" placeholder="type letters above..." id="captcha"/>
+        </div>               
+        <button id="submit_reject">Submit Request</button> 
+        </div>
+  </div>    
 {% endifequal %}
+
+    <div id="original" class="details_container" style="display:none;">        
+        <div style="padding:0px 30px; font-style:italic;">
+            {{ job.job.body_src }}
+        </div>
+        <div style="height:10px;clear:both;"></div>
+        {% if job.job.body_tgt %}
+                <h3>Machine Translation</h3>
+                <div style="padding:0px 30px; font-style:italic;">
+                    {{ job.job.body_tgt }} 
+                </div>
+        {% else %}
+        <div style="font-style:italic;">no machine translation is available</div>
+        {% endif %} 
+    </div>
+    
 
 
   </div>

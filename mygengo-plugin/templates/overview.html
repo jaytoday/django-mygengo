@@ -11,15 +11,13 @@
 </div><div style="height:20px;"></div>
 		
 
-{% for job_status, jobs_list in jobs %}
-    {% if jobs_list %}
-        <h1>{{ job_status.capitalize }} Jobs</h1>
-        {% for job in jobs_list %}
-            {% include "job.html" %}
-            <br/>
-        {% endfor %}
-    {% else %}
-        <h3><i>you don't have any {{ job_status }} jobs</i></h3>    
-    {% endif %}
+<ul>
+<h1 id="jobs_header">Your Jobs</h1>
+{% for job in jobs %}
+           <li style="margin: 15px;" class="job_link" id="{{ job.job_id }}"><a style="padding:10px;"><span style="font-weight:bold; cursor:pointer; font-size:1.3em; color: #0D2054;">Job{{ job.job_id }}</span> <i>({{ job.date }})</i></a></li> 
 {% endfor %}
+</ul>
 
+<div id="job_container" style="margin:25px 0;">
+
+</div>
