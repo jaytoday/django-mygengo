@@ -14,10 +14,7 @@
 <ul>
 <h1 id="jobs_header">Your Jobs</h1>
 {% for job in jobs %}
-           <li style="margin: 15px;" class="job_link" id="{{ job.job_id }}"><a style="padding:10px;"><span style="font-weight:bold; cursor:pointer; font-size:1.3em; color: #0D2054;">Job{{ job.job_id }}</span> <i>({{ job.date }})</i></a></li> 
+           <li style="margin: 15px;" class="job_link" id="{{ job.job_id }}"><a class="shortcut" style="padding:10px;"><span style="font-weight:bold; cursor:pointer; font-size:1.3em; color: #0D2054;">Job{{ job.job_id }}</span> <i>({{ job.date }})</i></a></li> 
 {% endfor %}
 </ul>
 
-<div id="job_container" style="margin:25px 0;">
-
-</div>

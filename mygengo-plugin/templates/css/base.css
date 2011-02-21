@@ -162,7 +162,7 @@ float:left;
 .job-inner{
 margin-top: 20px; 
 padding: 0 .7em;
-width:715px
+width:660px
 }
 
 .job-details{
@@ -190,4 +190,8 @@ padding: 10px;
 .comment-details{
 font-size:.8em;
 font-style:italic;
+}
+
+.job_container{
+    margin: 15px 10px 30px;
 }

@@ -1,7 +1,9 @@
 $(function(){
 
-    function getJob(job_id){
-    $('#job_container').text('loading...');
+    function getJob(joblink){
+        var job_id = joblink.attr('id');
+        var job_container = $('<div class="job_container">loading...</div>');
+        joblink.append(job_container);
 
         $.ajax({
         url: '/job/' + job_id,
@@ -9,13 +11,12 @@ $(function(){
         dataType: 'html', 
         data: {},
         success: function(data) {
-           $('#job_container').html(data);
+           job_container.html(data);
         },
         error: function(){
-            $('#job_container').text('there was an error while completing this action.');
+            job_container.text('there was an error while completing this action.');
         },
         complete: function(){
-            $('#jobs_header').text('Your Jobs');
             $(document).trigger('jobs_init');
         }
     });
@@ -29,11 +30,14 @@ $(function(){
                 $(this).show();
         });
     });
-    $('.job_link').find('a').live('click',function(){ 
+    $('.job_link').find('a.shortcut').live('click',function(){ 
         var $joblink = $(this).parents('.job_link:first');
-            $('#jobs_header').text('Loading job ' + $joblink.attr('id') + '...');
-            $joblink.hide();
-            getJob($joblink.attr('id'));            
+        if ($(this).hasClass('clicked')) 
+            return $joblink.find('.job_container').toggle('fast');
+        else
+            $(this).addClass('clicked');
+        
+            getJob($joblink);            
     });
     
     // bind navigation click events to section containers
