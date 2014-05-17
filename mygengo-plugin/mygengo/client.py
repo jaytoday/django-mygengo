@@ -89,7 +89,7 @@ class Client(object):
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
         try:
             conn = HTTPConnection(url_parts.hostname, url_parts.port)
-            headers['User-Agent'] = 'pythonMyGengo 1.0'
+            headers['User-Agent'] = 'myGengo Django Plugin; Version 1.0; http://www.jamtoday.org/;'
             conn.request(method, path, body, headers=headers)
             return conn.getresponse()
         except Exception, e:
